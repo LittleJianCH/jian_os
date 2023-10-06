@@ -6,18 +6,19 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 
-static HELLO: &[u8] = b"HELLO JIAN_OS";
+mod vga_buffer;
+
+use vga_buffer::{Color, ColorCode, Writer};
+
+static HELLO: &str = "HELLO JIAN_OS";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    let vga = 0xb8000 as *mut u8;
+    let mut writer = Writer::new();
 
-    for (i, &byte) in (0..).zip(HELLO.iter()) {
-        unsafe {
-            *vga.offset(i * 2) = byte;
-            *vga.offset(i * 2 + 1) = [0xe, 0xa, 0xb, 0xd][i as usize % 4];
-        }
-    }
+    writer.set_color(ColorCode::new(Color::Pink, Color::Black));
+    
+    writer.write_string(HELLO);
 
     loop {};
 }
