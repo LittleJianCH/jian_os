@@ -10,7 +10,7 @@ mod vga_buffer;
 
 use vga_buffer::{Color, ColorCode, Writer};
 
-static HELLO: &str = "HELLO JIAN_OS";
+static HELLO: &str = "HELLO JIAN_OS\nThis is a newline";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {

@@ -47,6 +47,7 @@ pub struct Buffer {
 }
 
 pub struct Writer {
+    row_pos: usize,
     column_pos: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer
@@ -55,6 +56,7 @@ pub struct Writer {
 impl Writer {
     pub fn new() -> Writer {
         return Writer {
+            row_pos: 0,
             column_pos: 0,
             color_code: ColorCode::new(Color::Yellow, Color::Black),
             buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
@@ -78,7 +80,7 @@ impl Writer {
                     self.newline();
                 }
 
-                self.buffer.chars[0][self.column_pos].write(ScreenChar {
+                self.buffer.chars[self.row_pos][self.column_pos].write(ScreenChar {
                     ascii_character: byte,
                     color_code: self.color_code,
                 });
@@ -93,5 +95,25 @@ impl Writer {
         }
     }
 
-    fn newline(&mut self) {}
+    fn newline(&mut self) {
+        if self.column_pos < BUFFER_HEIGHT - 1 {
+            self.row_pos += 1;
+        } else {
+            for row in 0..BUFFER_HEIGHT - 1 {
+                for col in 0..BUFFER_WIDTH {
+                    let character = self.buffer.chars[row + 1][col].read();
+                    self.buffer.chars[row][col].write(character);
+                }
+            }
+
+            for col in 0..BUFFER_WIDTH {
+                self.buffer.chars[BUFFER_HEIGHT - 1][col].write(ScreenChar {
+                    ascii_character: b' ',
+                    color_code: self.color_code,
+                });
+            }
+        }
+
+        self.column_pos = 0;
+    }
 }
