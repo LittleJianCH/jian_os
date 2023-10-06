@@ -9,21 +9,19 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
 mod vga_buffer;
 
 use core::fmt::Write;
-use vga_buffer::{Color, ColorCode, Writer};
+use vga_buffer::{Color, ColorCode, WRITER};
 
 static HELLO: &str = "HELLO JIAN_OS\nThis is a newline";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    let mut writer = Writer::new();
-
-    writer.set_color(ColorCode::new(Color::Pink, Color::Black));
+    WRITER.lock().set_color(ColorCode::new(Color::Pink, Color::Black));
     
-    writer.write_string(HELLO);
+    WRITER.lock().write_string(HELLO);
 
-    writer.set_color(ColorCode::new(Color::White, Color::Blue));
+    WRITER.lock().set_color(ColorCode::new(Color::White, Color::Blue));
 
-    write!(writer, "\nprint some numbers: {} {}", 42, 1.337).unwrap();
+    write!(WRITER.lock(), "\nprint some numbers: {} {}", 42, 1.337).unwrap();
 
     loop {};
 }

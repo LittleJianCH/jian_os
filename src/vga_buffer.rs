@@ -125,3 +125,9 @@ impl fmt::Write for Writer {
         return Ok(());
     }
 }
+
+use lazy_static::lazy_static;
+use spin::Mutex;
+lazy_static! {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer::new());
+}
