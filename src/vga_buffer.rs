@@ -97,7 +97,7 @@ impl Writer {
     }
 
     fn newline(&mut self) {
-        if self.column_pos < BUFFER_HEIGHT - 1 {
+        if self.row_pos < BUFFER_HEIGHT - 1 {
             self.row_pos += 1;
         } else {
             for row in 0..BUFFER_HEIGHT - 1 {
