@@ -1,27 +1,42 @@
 #![no_std]
 #![no_main]
 
+#![feature(custom_test_frameworks)]
+#![test_runner(crate::test_runner)]
+#![reexport_test_harness_main = "test_main"]
+
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     println!("ERROR: {}", _info);
     loop {}
 }
 
+#[cfg(test)]
+fn test_runner(tests: &[&dyn Fn()]) {
+    println!("Running {} tests...", tests.len());
+
+    for test in tests {
+        test();
+    }
+}
+
 mod vga_buffer;
 
-use vga_buffer::{Color, ColorCode, WRITER};
-
-static HELLO: &str = "HELLO JIAN_OS\nThis is a newline";
+static HELLO: &str = "HELLO JIAN_OS";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    set_color!(Pink, Black);
+    println!("{}", HELLO);
 
-    print!("{}\n", HELLO);
-
-    set_color!(White, Blue);
-
-    println!("print some numbers: {} {}", 42, 1.337);
+    #[cfg(test)]
+    test_main();
 
     loop {};
+}
+
+#[test_case]
+fn assert_2_times_3_eq_6() {
+    print!("assert 2 * 3 = 6... ");
+    assert_eq!(2 * 3, 6);
+    println!("[ok]");
 }
