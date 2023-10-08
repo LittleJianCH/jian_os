@@ -3,12 +3,12 @@
 
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
+    println!("ERROR: {}", _info);
     loop {}
 }
 
 mod vga_buffer;
 
-use core::fmt::Write;
 use vga_buffer::{Color, ColorCode, WRITER};
 
 static HELLO: &str = "HELLO JIAN_OS\nThis is a newline";
