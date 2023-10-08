@@ -15,13 +15,13 @@ static HELLO: &str = "HELLO JIAN_OS\nThis is a newline";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    WRITER.lock().set_color(ColorCode::new(Color::Pink, Color::Black));
-    
-    WRITER.lock().write_string(HELLO);
+    set_color!(Pink, Black);
 
-    WRITER.lock().set_color(ColorCode::new(Color::White, Color::Blue));
+    print!("{}\n", HELLO);
 
-    write!(WRITER.lock(), "\nprint some numbers: {} {}", 42, 1.337).unwrap();
+    set_color!(White, Blue);
+
+    println!("print some numbers: {} {}", 42, 1.337);
 
     loop {};
 }
