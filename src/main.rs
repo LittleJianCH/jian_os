@@ -5,6 +5,10 @@
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
+mod vga_buffer;
+mod io_exit;
+
+
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     println!("ERROR: {}", _info);
@@ -18,9 +22,9 @@ fn test_runner(tests: &[&dyn Fn()]) {
     for test in tests {
         test();
     }
-}
 
-mod vga_buffer;
+    exit!(Success);
+}
 
 static HELLO: &str = "HELLO JIAN_OS";
 
