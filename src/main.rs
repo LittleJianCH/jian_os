@@ -7,17 +7,29 @@
 
 mod vga_buffer;
 mod io_exit;
+mod serial;
 
 
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
-    println!("ERROR: {}", _info);
+    #[cfg(test)]
+    {
+        serial_println!("ERROR: {}", _info);
+        exit!(Failed);        
+    }
+
+    #[cfg(not(test))]
+    {
+        println!("ERROR: {}", _info);
+    }
+
     loop {}
 }
 
 #[cfg(test)]
 fn test_runner(tests: &[&dyn Fn()]) {
-    println!("Running {} tests...", tests.len());
+    serial_println!();
+    serial_println!("Running {} tests...", tests.len());
 
     for test in tests {
         test();
@@ -40,7 +52,7 @@ pub extern "C" fn _start() -> ! {
 
 #[test_case]
 fn assert_2_times_3_eq_6() {
-    print!("assert 2 * 3 = 6... ");
+    serial_print!("assert 2 * 3 = 6... ");
     assert_eq!(2 * 3, 6);
-    println!("[ok]");
+    serial_println!("[ok]");
 }
